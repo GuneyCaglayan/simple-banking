@@ -5,6 +5,7 @@ import com.eteration.simplebanking.dto.BankAccountDTO;
 import com.eteration.simplebanking.dto.BankAccountDTO;
 import com.eteration.simplebanking.dto.TransactionDTO;
 import com.eteration.simplebanking.entity.BankAccountEntity;
+import com.eteration.simplebanking.exception.NotFoundException;
 import com.eteration.simplebanking.repository.BankAccountRepository;
 import com.eteration.simplebanking.service.IBankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,11 @@ public class BankAccountService implements IBankAccountService {
     @Transactional(readOnly = true)
     public BankAccountDTO getAccountByAccountNumber(String accountNumber) {
         BankAccountEntity account = bankAccountRepository.findByAccountNumber(accountNumber);
+
+        if (account == null) {
+            throw new NotFoundException("Account is Not Found!!");
+        }
+
         BankAccountDTO response = new BankAccountDTO();
         response.setAccountNumber(account.getAccountNumber());
         response.setOwner(account.getOwner());

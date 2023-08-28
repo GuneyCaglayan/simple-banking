@@ -3,8 +3,10 @@ package com.eteration.simplebanking.controller;
 import com.eteration.simplebanking.dto.BankAccountDTO;
 import com.eteration.simplebanking.dto.ApprovalDTO;
 import com.eteration.simplebanking.dto.CreditRequest;
+import com.eteration.simplebanking.exception.NotFoundException;
 import com.eteration.simplebanking.service.impl.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,18 +39,23 @@ public class BankAccountController {
     }
 
     @GetMapping("/{accountNumber}")
-    public ResponseEntity<BankAccountDTO> getAccount(@PathVariable String accountNumber) {
-        BankAccountDTO account = bankAccountService.getAccountByAccountNumber(accountNumber);
-        if (account != null) {
-            BankAccountDTO response = new BankAccountDTO(
-                    account.getAccountNumber(),
-                    account.getOwner(),
-                    account.getBalance(),
-                    account.getCreateDate(),
-                    account.getTransactions()
-            );
-            return ResponseEntity.ok(response);
+    public ResponseEntity<?> getAccount(@PathVariable String accountNumber) throws NotFoundException {
+        try {
+            BankAccountDTO account = bankAccountService.getAccountByAccountNumber(accountNumber);
+            if (account != null) {
+                BankAccountDTO response = new BankAccountDTO(
+                        account.getAccountNumber(),
+                        account.getOwner(),
+                        account.getBalance(),
+                        account.getCreateDate(),
+                        account.getTransactions()
+                );
+                return ResponseEntity.ok(response);
+            }
+        } catch (NotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
+
         return ResponseEntity.notFound().build();
     }
 }

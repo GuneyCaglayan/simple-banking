@@ -4,6 +4,7 @@ import com.eteration.simplebanking.dto.ApprovalDTO;
 import com.eteration.simplebanking.entity.BankAccountEntity;
 import com.eteration.simplebanking.entity.TransactionEntity;
 import com.eteration.simplebanking.enums.TransactionTypeEnums;
+import com.eteration.simplebanking.exception.NotFoundException;
 import com.eteration.simplebanking.repository.BankAccountRepository;
 import com.eteration.simplebanking.repository.TransactionRepository;
 import com.eteration.simplebanking.service.ITransactionService;
@@ -35,6 +36,7 @@ public class TransactionService implements ITransactionService {
             transactionRepository.save(transaction);
             return new ApprovalDTO("OK", transaction.getApprovalCode());
         }
+
         return null;
     }
 
